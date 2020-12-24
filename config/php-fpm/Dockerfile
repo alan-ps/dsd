@@ -1,5 +1,5 @@
-# from https://www.drupal.org/docs/system-requirements/php-requirements
-FROM php:8.0-fpm-alpine3.12
+# from https://www.drupal.org/docs/8/system-requirements/drupal-8-php-requirements
+FROM php:7.4-fpm-alpine
 
 # install the PHP extensions we need
 # postgresql-dev is needed for https://bugs.alpinelinux.org/issues/3642
@@ -23,8 +23,8 @@ RUN set -eux; \
 	; \
 	\
 	docker-php-ext-configure gd \
-		--with-freetype \
-		--with-jpeg=/usr/include \
+		--with-freetype=/usr/include/ \
+		--with-jpeg=/usr/include/ \
 	; \
 	\
 	docker-php-ext-install -j "$(nproc)" \
@@ -41,7 +41,7 @@ RUN set -eux; \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
-	apk add --virtual .drupal-phpexts-rundeps $runDeps;
+	apk add --virtual .drupal-phpexts-rundeps $runDeps
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
@@ -51,13 +51,31 @@ RUN { \
 		echo 'opcache.max_accelerated_files=4000'; \
 		echo 'opcache.revalidate_freq=60'; \
 		echo 'opcache.fast_shutdown=1'; \
+		echo 'opcache.enable_cli=1'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-# https://github.com/drupal/drupal/blob/9.0.1/composer.lock#L4052-L4053
-COPY --from=composer:1.10 /usr/bin/composer /usr/local/bin/
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_HOME /tmp
+ENV COMPOSER_VERSION 1.9.3
 
-# install xDebug
-ENV XDEBUG_VERSION 3.0.1
+RUN curl -s -f -L -o /tmp/installer.php https://raw.githubusercontent.com/composer/getcomposer.org/b5a70434f0f582468a7824418553defaf67d5299/web/installer; \
+	php -r " \
+		\$signature = 'c5b9b6d368201a9db6f74e2611495f369991b72d9c8cbd3ffbc63edff210eb73d46ffbfce88669ad33695ef77dc76976'; \
+		\$hash = hash('SHA384', file_get_contents('/tmp/installer.php')); \
+		if (!hash_equals(\$signature, \$hash)) { \
+			unlink('/tmp/installer.php'); \
+			echo 'Integrity check failed, installer is either corrupt or worse.' . PHP_EOL; \
+			exit(1); \
+		} \
+	"; \
+	php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=${COMPOSER_VERSION}; \
+	composer --ansi --version --no-interaction; \
+ 	rm -rf /tmp/* /tmp/.htaccess
+
+# Setup the xDebug version to install.
+ENV XDEBUG_VERSION 2.9.2
+
+# Install xDebug.
 RUN set -x; \
     curl -SL "http://www.xdebug.org/files/xdebug-$XDEBUG_VERSION.tgz" -o xdebug.tgz; \
     mkdir -p /usr/src/xdebug; \

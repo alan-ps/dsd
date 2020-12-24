@@ -12,7 +12,7 @@ drupal_install_from_cratch() {
   docker-compose exec --user root php /bin/sh -ci "$drush si standard --yes \
     --account-name=admin \
     --account-pass=admin \
-    --site-name='Drupal 9 standard' \
+    --site-name='Drupal 8 standard' \
     --db-url=mysql://drupal:drupal@mariadb/drupal
   "
 }

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Exec drush command from the php container.
+drush="../vendor/bin/drush -r /var/www/web $@"
+docker-compose exec --user root php /bin/sh -ci "$drush"
