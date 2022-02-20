@@ -1,5 +1,5 @@
 # from https://www.drupal.org/docs/system-requirements/php-requirements
-FROM php:8.0-fpm-alpine3.12
+FROM php:8.0-fpm-alpine3.15
 
 # install the PHP extensions we need
 # postgresql-dev is needed for https://bugs.alpinelinux.org/issues/3642
@@ -13,6 +13,7 @@ RUN set -eux; \
 		freetype-dev \
 		libjpeg-turbo-dev \
 		libpng-dev \
+		libwebp-dev \
 		libzip-dev \
 		postgresql-dev \
 	; \
@@ -25,6 +26,7 @@ RUN set -eux; \
 	docker-php-ext-configure gd \
 		--with-freetype \
 		--with-jpeg=/usr/include \
+		--with-webp \
 	; \
 	\
 	docker-php-ext-install -j "$(nproc)" \
@@ -41,7 +43,7 @@ RUN set -eux; \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
-	apk add --virtual .drupal-phpexts-rundeps $runDeps;
+	apk add --no-network --virtual .drupal-phpexts-rundeps $runDeps;
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
@@ -53,11 +55,10 @@ RUN { \
 		echo 'opcache.fast_shutdown=1'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-# https://github.com/drupal/drupal/blob/9.0.1/composer.lock#L4052-L4053
-COPY --from=composer:1.10 /usr/bin/composer /usr/local/bin/
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/
 
 # install xDebug
-ENV XDEBUG_VERSION 3.0.1
+ENV XDEBUG_VERSION 3.1.3
 RUN set -x; \
     curl -SL "http://www.xdebug.org/files/xdebug-$XDEBUG_VERSION.tgz" -o xdebug.tgz; \
     mkdir -p /usr/src/xdebug; \
