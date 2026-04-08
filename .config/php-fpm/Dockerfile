@@ -14,7 +14,7 @@ RUN set -eux; \
 		libpng-dev \
 		libwebp-dev \
 		libzip-dev \
-		# postgresql-dev is needed for https://bugs.alpinelinux.org/issues/3642
+# postgresql-dev is needed for https://bugs.alpinelinux.org/issues/3642
 		postgresql-dev \
 	; \
 	\
@@ -31,7 +31,6 @@ RUN set -eux; \
 	\
 	docker-php-ext-install -j "$(nproc)" \
 		gd \
-		opcache \
 		pdo_mysql \
 		pdo_pgsql \
 		zip \
