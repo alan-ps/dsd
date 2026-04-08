@@ -1,6 +1,6 @@
 services:
   mariadb:
-    container_name: d9d-db
+    container_name: d11d-db
     image: mariadb:latest
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -13,7 +13,7 @@ services:
       - mysqldata:/var/lib/mysql/data
 
   php:
-    container_name: d9d-web
+    container_name: d11d-web
     build: ./.config/php-fpm
     links:
       - mariadb:mysql
@@ -21,7 +21,7 @@ services:
       - .:/var/www
 
   nginx:
-    container_name: d9d-nginx
+    container_name: d11d-nginx
     image: nginx:latest
     links:
       - php

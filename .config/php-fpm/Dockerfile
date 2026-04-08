@@ -1,8 +1,7 @@
 # from https://www.drupal.org/docs/system-requirements/php-requirements
-FROM php:8.0-fpm-alpine3.15
+FROM php:8.5-fpm-alpine3.23
 
 # install the PHP extensions we need
-# postgresql-dev is needed for https://bugs.alpinelinux.org/issues/3642
 RUN set -eux; \
 	\
 	apk add --no-cache --virtual .build-deps \
@@ -15,6 +14,7 @@ RUN set -eux; \
 		libpng-dev \
 		libwebp-dev \
 		libzip-dev \
+		# postgresql-dev is needed for https://bugs.alpinelinux.org/issues/3642
 		postgresql-dev \
 	; \
 	\
@@ -52,26 +52,11 @@ RUN { \
 		echo 'opcache.interned_strings_buffer=8'; \
 		echo 'opcache.max_accelerated_files=4000'; \
 		echo 'opcache.revalidate_freq=60'; \
-		echo 'opcache.fast_shutdown=1'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/
 
 # install xDebug
-ENV XDEBUG_VERSION 3.1.3
-RUN set -x; \
-    curl -SL "http://www.xdebug.org/files/xdebug-$XDEBUG_VERSION.tgz" -o xdebug.tgz; \
-    mkdir -p /usr/src/xdebug; \
-    tar -xf xdebug.tgz -C /usr/src/xdebug --strip-components=1; \
-    rm xdebug.*; \
-    cd /usr/src/xdebug; \
-    phpize; \
-    ./configure; \
-    make -j"$(nproc)"; \
-    make install; \
-    make clean
-
-COPY ./ext-xdebug.ini /usr/local/etc/php/conf.d/ext-xdebug.ini
-RUN apk del .build-deps
+# @todo
 
 WORKDIR /var/www/web

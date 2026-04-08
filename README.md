@@ -10,4 +10,4 @@ Easy way to deploy Drupal project in few steps. Take 🍸 and let the magic happ
 3. Run installation `/bin/bash .build/install.sh scratch`
 
 ### Refs
-  - [drupal/recommended-project](https://github.com/drupal/recommended-project/tree/9.1.x).
+  - [drupal/recommended-project](https://github.com/drupal/recommended-project/tree/11.x).
