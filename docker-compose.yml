@@ -17,6 +17,8 @@ services:
     build: ./.config/php-fpm
     links:
       - mariadb:mysql
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - .:/var/www
 

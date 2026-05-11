@@ -55,7 +55,21 @@ RUN { \
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/
 
+ENV XDEBUG_VERSION 3.4.2
 # install xDebug
-# @todo
+RUN set -x; \
+    curl -SL "https://www.xdebug.org/files/xdebug-$XDEBUG_VERSION.tgz" -o xdebug.tgz; \
+    mkdir -p /usr/src/xdebug; \
+    tar -xf xdebug.tgz -C /usr/src/xdebug --strip-components=1; \
+    rm xdebug.*; \
+    cd /usr/src/xdebug; \
+    phpize; \
+    ./configure; \
+    make -j"$(nproc)"; \
+    make install; \
+    make clean
+
+COPY ./ext-xdebug.ini /usr/local/etc/php/conf.d/ext-xdebug.ini
+RUN apk del .build-deps
 
 WORKDIR /var/www/web
