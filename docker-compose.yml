@@ -11,12 +11,18 @@ services:
       - 7306:3306
     volumes:
       - mysqldata:/var/lib/mysql/data
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   php:
     container_name: d11d-web
     build: ./.config/php-fpm
-    links:
-      - mariadb:mysql
+    depends_on:
+      mariadb:
+        condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -25,7 +31,7 @@ services:
   nginx:
     container_name: d11d-nginx
     image: nginx:latest
-    links:
+    depends_on:
       - php
     ports:
       - '7080:80'
