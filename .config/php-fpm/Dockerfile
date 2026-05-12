@@ -73,4 +73,4 @@ RUN set -x; \
 COPY ./ext-xdebug.ini /usr/local/etc/php/conf.d/ext-xdebug.ini
 RUN apk del .build-deps
 
-WORKDIR /var/www/web
+WORKDIR /var/www
