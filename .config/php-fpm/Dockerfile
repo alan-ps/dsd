@@ -47,11 +47,14 @@ RUN set -eux; \
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
+# opcache.revalidate_freq=0 for dev: PHP checks for file changes on every request,
+# preventing stale cache during active development and Composer installs.
+# For production, set to 60 (or higher) to avoid unnecessary stat() calls.
 RUN { \
 		echo 'opcache.memory_consumption=128'; \
 		echo 'opcache.interned_strings_buffer=8'; \
 		echo 'opcache.max_accelerated_files=4000'; \
-		echo 'opcache.revalidate_freq=60'; \
+		echo 'opcache.revalidate_freq=0'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/
