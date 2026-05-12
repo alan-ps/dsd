@@ -22,6 +22,7 @@ Admin credentials: `admin` / `admin`.
 |---|---|
 | `./.build/install.sh scratch` | Fresh Drupal install |
 | `./.build/install.sh db` | Import from existing database dump (`web/file.sql`) |
+| `./.build/install.sh config` | Install from existing exported configuration (`drush cex`) |
 
 ### Refs
 - [drupal/recommended-project](https://github.com/drupal/recommended-project/tree/11.x)
