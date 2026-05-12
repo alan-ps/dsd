@@ -20,6 +20,9 @@ case "$1" in
     drupal_install_from_config_installer
     ;;
 *)
-    echo "@todo show help message"
+    echo "Usage: install.sh [scratch|db|config]"
+    echo "  scratch  Fresh Drupal install"
+    echo "  db       Import from existing database dump (web/file.sql)"
+    echo "  config   Install from existing exported configuration"
     ;;
 esac

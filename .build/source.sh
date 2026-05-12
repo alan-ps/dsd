@@ -23,8 +23,10 @@ drupal_install_from_existing_db() {
   docker compose exec --user root php /bin/sh -ci "$drush sqlc < $sqlfile"
 }
 
-# Helper function to install a Drupal 8 site using existing configuration.
-# @see https://www.drupal.org/project/config_installer
+# Helper function to install a Drupal 11 site using existing configuration.
+# @see https://www.drupal.org/docs/installing-drupal/drupal-configuration-management
 drupal_install_from_config_installer() {
-  echo "@todo";
+  docker compose exec --user root php /bin/sh -ci "$drush si --existing-config --yes \
+    --db-url=mysql://drupal:drupal@mariadb/drupal
+  "
 }
