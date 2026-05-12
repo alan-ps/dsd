@@ -55,7 +55,7 @@ RUN { \
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/
 
-ENV XDEBUG_VERSION 3.4.2
+ENV XDEBUG_VERSION 3.5.1
 # install xDebug
 RUN set -x; \
     curl -SL "https://www.xdebug.org/files/xdebug-$XDEBUG_VERSION.tgz" -o xdebug.tgz; \
