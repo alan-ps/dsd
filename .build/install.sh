@@ -13,7 +13,7 @@ docker exec -it ${web_container_id} /bin/sh -c "COMPOSER_MEMORY_LIMIT=-1 COMPOSE
 # Install Drupal 11.
 case "$1" in
 "scratch")
-    drupal_install_from_cratch
+    drupal_install_from_scratch
     ;;
 "db")
     drupal_install_from_existing_db
